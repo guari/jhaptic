@@ -1,0 +1,711 @@
+<!--
+This file is part of JHaptic.
+
+JHaptic is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+JHaptic is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with JHaptic.  If not, see <http://www.gnu.org/licenses/>.
+
+Copyright 2012 Andrea Guarinoni, Politecnico di Milano
+-->
+
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/html">
+	<head>
+		<meta charset="ISO-8859-1">
+		<title>JHaptic library TestPage</title>
+		<script language="Javascript" src="./function.js"></script>
+		<script language="Javascript" src="./string.js"></script>
+		<script language="Javascript" src="./array.js"></script>
+		<script language="Javascript" src="./math.js"></script>
+		<script language="Javascript" src="./htmlElement.js"></script>
+		<script language="Javascript" src="./vector.js"></script>
+		<script language="Javascript" src="./forceModel.js"></script>
+		<script language="Javascript" src="./spring.js"></script>
+		<script language="Javascript" src="./damper.js"></script>
+		<script language="Javascript" src="./vibration.js"></script>
+		<script language="Javascript" src="./mass.js"></script>
+		<script language="Javascript" src="./nullModel.js"></script>
+		<script language="Javascript" src="./constantModel.js"></script>
+		<script language="Javascript" src="./magnet.js"></script>
+		<script language="Javascript" src="./virtualWall.js"></script>
+		<script language="Javascript" src="./device.js"></script>
+		<script language="Javascript" src="./virtualDevice.js"></script>
+		<script language="Javascript" src="./effect.js"></script>
+		<script language="Javascript" src="./console.js"></script>
+		<script language="Javascript" src="./messageBox.js"></script>
+		<script language="Javascript" src="./graph.js"></script>
+		<script language="Javascript" src="./controlGUI.js"></script>
+		<script language="Javascript" src="./virtualWorkspace.js"></script>
+		<script language="Javascript" src="./behavior.js"></script>
+		<!------ The following line imports an external library used only for 3d animation into virtualWorkspace.js ------->
+		<!------ (the 'Virtual I/O' console tab) ------>
+		<script language="Javascript" src="./External_libraries/Three.js"></script>
+        <style>
+
+            @import url(http://fonts.googleapis.com/css?family=Open+Sans:300,600,400);
+            @import url(http://fonts.googleapis.com/css?family=Ovo);
+
+            body {
+                font-family: 'Open Sans','Helvetica Neue','Lucida Grande','Helvetica',sans-serif;
+                font-weight: normal;
+                /* Makes the vertical size of the text the same for all fonts: */
+                line-height: 1;
+                font-size: 13px;
+                background: #c1d4da;
+                color: #000;
+                margin: 0;
+                text-rendering: optimizelegibility;
+            }
+
+            hr  { margin:0; }
+            h1  { display: inline; font-weight:bold; font-family: 'Flexo Light','Open Sans',sans-serif; color: #3e6477; font-size: 50px;}
+            h2  { display: inline; font-weight: normal; font-family: 'Flexo Light','Open Sans Light',sans-serif; color: #3e6477; font-size: 50px;}
+            h3  { display: inline; font-weight: normal; font-size: 16px; color: #00CCFF; margin:20px 0 15px 0; }
+
+            #page {
+                /*border: 3px solid #28AEA8;*/
+                position: relative;
+                margin-left: 8%;
+                margin-right: 8%;
+                margin-bottom: 20px;
+                text-align: center;
+                background: white;
+                border-radius: 20px;
+                -webkit-border-radius: 20px;
+                -moz-border-radius: 20px;
+                box-shadow: #777 -2px 2px 25px;
+                -webkit-box-shadow: #777 -2px 2px 25px;
+                -moz-box-shadow: #777 -2px 2px 25px;
+                /*-webkit-box-shadow: #ddd -2px 2px 10px;*/
+            }
+
+            header {
+                margin: 20px auto;
+                font-size: 40px;
+                padding-top: 50px;
+                padding-bottom: 30px;
+                font-weight: bold;
+                text-shadow: transparent 0 0 1px; /*anti-alias*/
+            }
+
+            .divider {
+                background-repeat: no-repeat;
+                background-position: center top;
+                background-color: #e5e5e5;
+                width: 100%;
+                height: 1px;
+                margin: 18px 0 27px;
+                box-shadow: 0px -1px 2px #eee;
+            }
+
+            .section-a {
+                background-color: #fafafa;
+                padding: 30px 0 30px;
+                border-top: 1px solid #e5e5e5;
+                border-bottom: 1px solid #e5e5e5;
+            }
+
+            .section-b {
+                background-color: #eee;
+                background: linear-gradient(#eee, #ddd);
+                padding: 20px 0 20px;
+                border-radius: 0 0 20px 20px;
+                -webkit-border-radius: 0 0 20px 20px;
+                -moz-border-radius: 0 0 20px 20px;
+            }
+
+            .container {
+                display: inline-block;
+                padding-left: 20px;
+                padding-right: 20px;
+            }
+
+            .controls-container {
+                padding-left: 10px;
+                padding-right: 10px;
+                border-bottom: 1px solid #f2f2f2;
+                /*border-radius: 10px;*/
+            }
+            .controls-container:after	{
+                -webkit-box-shadow: inset 0 15px 15px -20px rgba(0,0,0,0.5);
+                -moz-box-shadow: inset 0 15px 15px -20px rgba(0,0,0,0.5);
+                -webkit-mask-image: -webkit-linear-gradient(left, rgba(0,0,0,0), rgba(0,0,0,1) 20%, rgba(0,0,0,1) 80%, rgba(0,0,0,0) 100%);
+                -moz-mask-image: -moz-linear-gradient(left, rgba(0,0,0,0), rgba(0,0,0,1) 20%, rgba(0,0,0,1) 80%, rgba(0,0,0,0) 100%);
+                height: 8px;
+                width: 100%;
+                position: relative;
+                content: '';
+                bottom: -9px;
+                left: 0;
+                display: block;
+                border-top: 1px solid rgba(0,0,0,0.1)
+            }
+            .controls-container span {
+                font-size: 12px;
+                padding-left: 2px;
+                padding-right: 2px;
+                color: #111;
+            }
+
+            .controls-description {
+                text-align: left;
+            }
+
+            .label {
+                display: inline-block;
+                font-weight: bold;
+                padding: 10px 5px 10px 5px;
+                font-size: 15px;
+            }
+
+            .info {
+                display: inline-block;
+                font-weight: normal;
+                font-family: 'Ovo', 'Open Sans Light', sans-serif;
+                padding: 10px 5px 10px 5px;
+                font-size: 13px;
+                color: #888;
+            }
+
+            .sub-container {
+                padding-top: 10px;
+            }
+
+            .ribbon {
+                position: absolute;
+                top: -1px;
+                left: -1px;
+            }
+
+            .ribbon img {
+                display: block;
+                border: 0;
+            }
+
+            .input-text {
+                min-height: 28px;
+                padding: 4px 8px 4px 8px;
+                margin-top: 4px;
+                margin-bottom: 4px;
+                outline: none;
+                color: #333;
+                background-color: #fff;
+                background-repeat: no-repeat;
+                background-position: right center;
+                border: 1px solid #ccc;
+                border-radius: 3px;
+                -webkit-border-radius: 3px;
+                -moz-border-radius: 3px;
+                box-shadow: inset 0 1px 2px rgba(0,0,0,0.075);
+                -webkit-box-shadow:  inset 0 1px 2px rgba(0,0,0,0.075);
+                -moz-box-shadow:  inset 0 1px 2px rgba(0,0,0,0.075);
+                box-sizing: border-box;
+                -webkit-box-sizing: border-box;
+                -moz-box-sizing: border-box;
+                transition: all 0.25s ease-in;
+                -webkit-transition: all 0.25s ease-in 0;
+                -moz-transition:  all 0.25s ease-in;
+                -ms-transition:  all 0.25s ease-in;
+                -o-transition:  all 0.25s ease-in;
+                vertical-align: middle;
+                font-size: 12px;
+            }
+            .input-text:focus{
+                border: 1px solid #47c6f2;
+                box-shadow: 0 0 5px #9ddff4;
+                -moz-box-shadow: 0 0 5px #9ddff4;
+                -webkit-box-shadow: 0 0 5px #9ddff4;
+                box-shadow: 0 0 5px #9ddff4, inset 0 1px 1px rgba(0,0,0,0.075);
+            }
+
+            .colored-button {
+                background: linear-gradient(#f7f7f7, #dfdfdf);
+                background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #f7f7f7), color-stop(1, #dfdfdf) );
+                background:-moz-linear-gradient( center top, #f7f7f7 5%, #dfdfdf 100% );
+                filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#ededed', endColorstr='#dfdfdf');
+                background-color:#ededed;
+                -moz-border-radius:6px;
+                -webkit-border-radius:6px;
+                border-radius:6px;
+                border:1px solid #ddd;
+                display:inline-block;
+                color:#777777;
+                font-family: Helvetica, 'Open Sans', Arial, Verdana, sans-serif;
+                font-size:15px;
+                font-style: normal;
+                font-weight:bold;
+                padding:6px 24px;
+                text-decoration:none;
+                text-shadow: 1px 1px 0 rgba(255,255,255,0.5);
+                margin-top: 5px;
+                margin-bottom: 5px;
+                cursor: pointer;
+            }
+            .colored-button:hover {
+                background: linear-gradient(#d9eef5, #c1d4da);
+                background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #d9eef5), color-stop(1, #c1d4da) );
+                background:-moz-linear-gradient( center top, #d9eef5 5%, #c1d4da 100% );
+                 filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#d9eef5', endColorstr='#c1d4da');
+                background-color: #c1d4da;
+                border-color: #bbb;
+                box-shadow: 0 0 10px rgba(65,131,196,0.3);
+             }
+            .colored-button:active {
+                  position:relative;
+                  top:1px;
+             }
+                /* Sizes ---------- */
+            .small.colored-button {
+                font-size: 11px;
+            }
+            .medium.colored-button {
+                font-size: 13px;
+            }
+            .large.colored-button {
+                font-size: 14px;
+                padding: 8px 14px 9px;
+            }
+
+                /* Colors ---------- */
+            .blue.colored-button:hover {
+                background: linear-gradient(#cbf5ff, #8be0e5);
+                background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #cbf5ff), color-stop(1, #acdbd8) );
+                background:-moz-linear-gradient( center top, #cbf5ff 5%, #8be0e5 100% );
+                filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#b4eaff', endColorstr='#2daebf');
+                background-color: #cbf5ff;
+                border-color: #a0d4ce;
+            }
+            .red.colored-button:hover {
+                background: linear-gradient(#ffc3ad, #e8969c);
+                background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #ffc3ad), color-stop(1, #e8969c) );
+                background:-moz-linear-gradient( center top, #ffc3ad 5%, #e8969c 100% );
+                filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#e33100', endColorstr='#2daebf');
+                background-color: #e8969c;
+                border-color: #db868b;
+            }
+            .green.colored-button:hover {
+                background: linear-gradient(#d3ffa7, #a2d38b);
+                background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #d3ffa7), color-stop(1, #a2d38b) );
+                background:-moz-linear-gradient( center top, #d3ffa7 5%, #a2d38b 100% );
+                filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#e33100', endColorstr='#2daebf');
+                background-color: #a2d38b;
+                border-color: #9ecd7c;
+            }
+            .orange.colored-button:hover {
+                background: linear-gradient(#ffec8f, #f5ce77);
+                background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #ffec8f), color-stop(1, #f5ce77) );
+                background:-moz-linear-gradient( center top, #ffec8f 5%, #f5ce77 100% );
+                filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffec8f', endColorstr='#f5ce77');
+                background-color: #f5ce77;
+                border-color: #ffb515;
+            }
+
+            .box h4 {
+                text-align:center;
+                position:relative;
+                /*top:20px;*/
+                color: #FFFFFF;
+                font-weight: normal;
+                text-shadow: 1px 1px 2px rgba(0,0,0,0.2)
+            }
+            .box {
+                position: relative;
+                z-index: 0;
+            }
+            .pseudo-box {
+                position: relative;
+                width:70%;
+                height:100px;
+                background:#FFF;
+                margin: 1px auto;
+                -webkit-box-shadow: 0 0 13px #ccc;
+                -moz-box-shadow: 0 0 13px #ccc;
+                box-shadow: 0 0 13px #ccc;
+                -webkit-border-radius: 5px;
+                -moz-border-radius: 5px;
+                border-radius: 5px;
+            }
+            .shadowed {
+                position: relative;
+            }
+            .shadowed:before, .shadowed:after {
+                z-index: -1;
+                position: absolute;
+                content: "";
+                bottom: 15px;
+                left: 10px;
+                width: 50%;
+                top: 50%;
+                max-width:300px;
+                background: #777;
+                -webkit-box-shadow: 0 15px 10px #777;
+                -moz-box-shadow: 0 15px 10px #777;
+                box-shadow: 0 15px 10px #777;
+                -webkit-transform: rotate(-3deg);
+                -moz-transform: rotate(-3deg);
+                -o-transform: rotate(-3deg);
+                -ms-transform: rotate(-3deg);
+                transform: rotate(-3deg);
+            }
+            .shadowed:after {
+                -webkit-transform: rotate(3deg);
+                -moz-transform: rotate(3deg);
+                -o-transform: rotate(3deg);
+                -ms-transform: rotate(3deg);
+                transform: rotate(3deg);
+                right: 10px;
+                left: auto;
+            }
+            .shadowed:hover {
+                transition: all 0.6s;
+                -webkit-box-shadow: 0 0px 10px #777;
+                -moz-box-shadow: 0 0px 10px #777;
+                box-shadow: 0 0px 10px #777;
+            }
+
+            .arrow-box {
+                display: inline-block;
+                position: absolute;
+                text-align: left;
+                top: 4px;
+                bottom: 4px;
+                right: 4px;
+                left: 4px;
+                min-width: 200px;
+                background-color: #405a6a;
+                background-image: -moz-linear-gradient(#829aa8, #405a6a);
+                background-image: -webkit-linear-gradient(#829aa8, #405a6a);
+                background-image: linear-gradient(#829aa8, #405a6a);
+                background-repeat: repeat-x;
+                color: #EEE;
+                -webkit-border-radius: 5px;
+                -moz-border-radius: 5px;
+                border-radius: 5px;
+
+            }
+            .fit-three-elem {
+                width: calc(33.2% - 2px);
+                width: -webkit-calc(33.2% - 2px);
+                width: -moz-calc(33.2% - 2px);
+            }
+            .fit-two-elem {
+                width: calc(50% - 3px);
+                width: -webkit-calc(50% - 3px);
+                width: -moz-calc(50% - 3px);
+            }
+            .fit-one-elem {
+                width: 100%;
+            }
+            .arrow-box div {
+                box-sizing: border-box;
+                padding: 0 10px 0 34px;
+                display: inline-block;
+                height: 100%;
+                position: relative;
+                vertical-align: middle;
+                line-height: 20px;
+                text-align: center;
+                -webkit-border-radius: 5px;
+                -moz-border-radius: 5px;
+                border-radius: 5px;
+                -webkit-box-shadow: 0 0 4px #444;
+                -moz-box-shadow: 0 0 4px #444;
+                box-shadow: 0 0 4px #444;
+                text-shadow: 0 0 3px #444;
+                cursor: pointer;
+            }
+            .arrow-box div:first-child {
+                /* since the first link does not have a triangle before it we can reduce the
+                   left padding to make it look consistent with other links */
+                padding-left: 20px;
+                border-radius: 5px 0 0 5px; /*to match with the parent's radius*/
+            }
+            .arrow-box div:first-child:before {
+                left: 14px;
+            }
+            .arrow-box div:last-child {
+                border-radius: 0 5px 5px 0; /*this was to prevent glitches on hover*/
+                padding-right: 20px;
+            }
+            /* hover/active styles */
+            .arrow-box div:hover{
+                background: #334754;
+            }
+            .arrow-box div:hover:after {
+                background: #334754;
+            }
+            /*adding the arrows for the arrow-box (breadcrumbs) using rotated pseudo elements*/
+            .arrow-box div:after {
+                content: '';
+                position: absolute;
+                top: 10px; /*to center the arrow after the shift generated by skew trasform*/
+                right: -36px; /*half of square's length*/
+                /* same dimension as the height of .arrow-box div minus extra height generated by
+                   the skew trasform stretch (90px-20px) */
+                width: 70px;
+                height: 70px;
+                /* as you see the rotated square takes a larger height. which makes it tough to position it properly.
+                   So we are going to scale it down so that the diagonals become equal to the height of the .arrow-box div.
+                   We scale it to 70.7% because if square's:
+                   length = 1; diagonal = (1^2 + 1^2)^0.5 = 1.414 (pythagoras theorem)
+                   if diagonal required = 1; length = 1/1.414 = 0.707 */
+                -webkit-transform: scale(0.707) rotate(45deg) skew(20deg,20deg);
+                -moz-transform: scale(0.707) rotate(45deg) skew(20deg,20deg);
+                -ms-transform: scale(0.707) rotate(45deg) skew(20deg,20deg);
+                -o-transform: scale(0.707) rotate(45deg) skew(20deg,20deg);
+                transform: scale(0.707) rotate(45deg) skew(20deg,20deg);
+
+                /* we need to prevent the arrows from getting buried under the next link */
+                z-index: 1;
+                /* background same as divs but the gradient will be rotated to compensate with the transform applied */
+                background-color: #405a6a;
+                background-image: -moz-linear-gradient(135deg, #829aa8, #405a6a);
+                background-image: -webkit-linear-gradient(135deg, #829aa8, #405a6a);
+                background-image: linear-gradient(135deg, #829aa8, #405a6a);
+                background-repeat: repeat-x;
+                /* stylish arrow design using box shadow */
+                box-shadow:
+                    2px -2px 0 2px rgba(255, 255, 255, 0.9),
+                    3px -3px 0 2px rgba(255, 255, 255, 0.6);
+                /* 5px - for rounded arrows and
+                    150px - to prevent hover glitches on the border created using shadows */
+                border-radius: 0 5px 0 150px;
+            }
+            /* we dont need an arrow after the last link */
+            .arrow-box div:last-child:after {
+                content: none;
+            }
+
+            .info-box {
+                background: #f8fcff;
+                color: #555;
+                font-family: Helvetica, sans-serif;
+                font-size: 14px;
+                line-height: 1.1;
+                padding: 5px;
+                margin: 20px 20% 10px 20%;
+                text-align: center;
+                border: 1px solid #d0d7da;
+                text-shadow: 0 0 0 #333;
+                border-radius: 5px;
+            }
+
+        </style>
+	</head>
+	<body>
+        <div id="page">
+            <a class="ribbon" href="https://github.com/guari/jhaptic/">
+                <img src="https://s3.amazonaws.com/github/ribbons/forkme_left_red_aa0000.png" alt="Fork me on GitHub">
+            </a>
+            <header>
+                <h1>JHaptic</h1><h2> framework </h2><h3>TestPage</h3>
+            </header>
+            <section>
+                <script type="text/javascript">
+                //window.onload = function(){
+                    // create a new device (in this case a virtual device,
+                    // by enabling the haptic cursor simulation via mouse coordinates capture,
+                    // by setting 10.5N as maximum playable force of the virtual haptic device
+                    // and 20cm x 15cm x 10cm as its workspace dimensions;
+                    // if no parameters are passed to VirtualDevice constructor, it will be
+                    // automatically set the default parameters):
+                    var dev = new jhaptic.VirtualDevice(3.3, new jhaptic.Vector(0.16,0.12,0.07));
+                    // enable console to read debug messages and variables:
+                    dev.enableConsoleLog();
+                    /*
+                        You must initialize the device before using it (init() command),
+                        and you have to activate the loop to render the effects on the device
+                        in order to receive the haptic effects set (startRenderer() command)
+                     */
+
+                    function initialize(){
+                        dev.init();
+                        // enable the context 2D in which the haptic device will be used:
+                        // (NB: in this mode the end-effector position is however taken along
+                        // the three axis and it is therefore possible to define 'tridimensional'
+                        // haptic effects; this mode is more complex than '3d' mode as it has to
+                        // handle the movement of the generic haptic cursor within a two-dimensional web page)
+                        dev.setContext("2d");
+                    }
+
+                    // define a mathematical force model (Spring in this case):
+                    var k = new jhaptic.Vector(3,4,5);
+                    var elem = document.getElementsByClassName("ribbon")[0].getPositionOnPage();
+                    var poi = new jhaptic.Vector(elem.x,elem.y,0);
+                    var mySpring = new jhaptic.Spring(k,poi);
+
+                    // create a haptic effect that has as model mySpring and a infinite maximum duration:
+                    var mySpringEffect = new jhaptic.Effect(mySpring, 0);
+                    mySpringEffect.name = "sEffect";
+                    function addSpringEffectToPage () {
+                        // finally add the effect to our web page, we want that it starts when we click on the button with id='PlaySpring':
+                        mySpringEffect.setStartupParam(document.getElementById('PlaySpring'), 'click');
+                        // that it stops when we move the cursor over the input field with id='InputY':
+                        mySpringEffect.setStopParam(document.getElementById('InputY'), 'mousemove');
+                        // and that it will be completely disabled when we click on the button with id='RemoveSpring':
+                        // (if the effect is playing it will be stopped, the command removes the effect from the web page)
+                        mySpringEffect.setRemovalParam(document.getElementById('RemoveSpring'), 'click');
+                        mySpringEffect.enable(dev);
+                    }
+
+                    // define an other mathematical force model (now Vibration):
+                    var a = new jhaptic.Vector (0,0,3);
+                    var w = new jhaptic.Vector(0,0,4);
+                    var myVibration = new jhaptic.Vibration(a,w);
+                    // create an haptic effect that has as model myVibration and as maximum duration 2 seconds:
+                    var myVibrationEffect = new jhaptic.Effect(myVibration, 2000);
+                    myVibrationEffect.name = "vEffect";
+                    function addVibrationEffectToPage () {
+                        // finally add it to the web page, it'll start when will be given the focus on the input field with id='InputX':
+                        myVibrationEffect.setStartupParam(document.getElementById('InputX'), 'focus');
+                        myVibrationEffect.enable(dev);
+                    }
+                    function removeVibrationEffectFromPage(){
+                        // remove the effect from the web page
+                        // (to disable an effect when occours a particoular event use .setRemovalParam()
+                        //  and then .enable() to make 'operative' the settings made, to simply disable
+                        //  instantaneously an effect use .disable())
+                        myVibrationEffect.disable(dev);
+                    }
+
+                    var myVibration2 = new jhaptic.Vibration(new jhaptic.Vector(2,2,2),new jhaptic.Vector(2,2,2));
+
+                    // create an haptic effect with a compound force model mySpring*myVibration2 and infinite max duration:
+                    var mySpringVibrationEffect = new jhaptic.Effect(mySpring.amplifiedWith(myVibration2), 0);
+                    mySpringVibrationEffect.name = "svEffect";
+                    function addSpringVibrationEffectToPage () {
+                        // finally add it to web page, by enabling it when the cursor hovers the text field with id='InputZ':
+                        mySpringVibrationEffect.setStartupParam(document.getElementById('InputZ'), 'mousemove');
+                        // and by disabling it when the user gives the focus to text field with id='InputY':
+                        mySpringVibrationEffect.setRemovalParam(document.getElementById('InputY'), 'focus');
+                        mySpringVibrationEffect.enable(dev);
+                    }
+
+                    ///////////////////////////////////////////////////////////////////
+                    var bvr;
+                    function testBehavior(){
+                        var vEffect = new jhaptic.Effect(myVibration, 3000);
+                        //vEffect.setStartupParam(document.getElementById('InputX'), 'dblclick');
+                        vEffect.setStopParam(document.getElementById('InputY'), 'mouseover');
+                        vEffect.setRemovalParam(document.getElementById('InputZ'), 'mouseover');
+                        var v2Effect = new jhaptic.Effect(myVibration2, 5000);
+                        //v2Effect.setStartupParam(document.getElementById('PlaySpring'), 'click');
+                        v2Effect.setStopParam(document.getElementById('RemoveSpring'), 'click');
+                        bvr = new jhaptic.Behavior(new Array(vEffect, v2Effect));
+                        bvr.setStartupParam(document.getElementById('InputZ'), 'click');
+                        bvr.name = 'bvr';
+                        vEffect.name='vEffect';
+                        v2Effect.name='v2Effect';
+                        bvr.enable(dev, 'chainOnStop', 3);
+                    }
+
+                //}
+                </script>
+                <section class="section-a">
+                    <div class="container">
+                        <div class="controls-container">
+                            <div class="controls-description">
+                                <div class="label">Device state controls:</div>
+                                <div class="info">switch on/off the haptic device</div>
+                            </div>
+                            <input class="colored-button small blue" type="SUBMIT" value="Init Device" onClick="initialize()"/>
+                            <input class="colored-button small orange" type="SUBMIT" value="Check Device Initialization" onClick="alert(dev.hasBeenInitialized())"/>
+                            <input class="colored-button small green" type="SUBMIT" value="Start Haptic Playback" onClick="dev.startRenderer()"/>
+                            <input class="colored-button small red" type="SUBMIT" value="Stop Device" onClick="dev.stop()"/>
+                            </br>
+                        </div>
+                        <div class="controls-container">
+                            <div class="controls-description">
+                                <div class="label">Device inputs:</div>
+                                <div class="info">directly read the current haptic device position and force applied by the user</div>
+                            </div>
+                            <input class="colored-button small" type="SUBMIT" value="Get Position" onClick="alert(dev.getPosition())"/>
+                            <input class="colored-button small" type="SUBMIT" value="Get Input Force" onClick="alert(dev.getForceInput())"/>
+                            </br>
+                        </div>
+                        <div class="controls-container">
+                            <form action=''>
+                                <div class="controls-description">
+                                    <div class="label">Device output:</div>
+                                    <div class="info">directly set a force impulse to be played with the haptic device</div>
+                                </div>
+                                <span>X Value</span><input type='text' class='input-text' id='InputX' name='InputX' size='12' value=''>
+                                <span>Y Value</span><input type='text' class='input-text' id='InputY' name='InputY' size='12' value=''>
+                                <span>Z Value</span><input type='text' class='input-text' id='InputZ' name='InputZ' size='12' value=''>
+                                <input class="colored-button small" type='button'  value='Send Force' onClick="dev.sendForce(new jhaptic.Vector(InputX.value,InputY.value,InputZ.value))">
+                            </form>
+                            </br>
+                        </div>
+                        <div class="sub-container">
+                            <input class="colored-button small" type="button" value="Change to context '2d'" onClick="dev.setContext('2d');">
+                            <input class="colored-button small" type="button" value="Change to context '3d'" onClick="dev.setContext('3d')">
+                        </div>
+                    </div>
+                </section>
+                <section class="section-b">
+                    <div class="box">
+                        <div class="pseudo-box shadowed">
+                            <div class="arrow-box">
+                                <div class="fit-three-elem" onClick="addSpringEffectToPage()">
+                                    <p>Click to add a new haptic effect to the page with a Spring force model and an infinite duration</p>
+                                </div>
+                                <div class="fit-three-elem" id="PlaySpring">
+                                    <p>Click to start playing the Spring effect you've defined above</p>
+                                </div>
+                                <div class="fit-three-elem" id="RemoveSpring">
+                                    <p>Click to remove the previously defined Spring effect from the page</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    </br>
+                    <div class="box">
+                        <div class="pseudo-box shadowed">
+                            <div class="arrow-box">
+                                <div class="fit-two-elem" onClick="addVibrationEffectToPage()">
+                                    <p>Click to add a new haptic effect to the page with a Vibration force model and a duration of 2 seconds, the effect is set to start when you focus on the inputbox labeled 'X Value'</p>
+                                </div>
+                                <div class="fit-two-elem" id="RemoveVibration" onClick="removeVibrationEffectFromPage()">
+                                    <p>Click to remove from the page the Vibration effect defined above</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    </br>
+                    <div class="box">
+                        <div class="pseudo-box shadowed">
+                            <div class="arrow-box">
+                                <div class="fit-one-elem" onClick="addSpringVibrationEffectToPage()">
+                                    <p>Click to add a new haptic effect to the page with a composed model Vibration*Spring and an infinite duration, the effect is set o start when you move the mouse over the textbox labeled 'Z Value' and it will be removed when you focus on textbox labeled 'Y Value'</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    </br>
+                    <div class="box">
+                        <div class="pseudo-box shadowed">
+                            <div class="arrow-box">
+                                <div class="fit-one-elem" onClick="testBehavior()">
+                                    <p>Test behavior sample</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="info-box">
+                        <p>... and now try pressing the buttons in the order you want to check the errors resistance</p>
+                        <p>Don't forget to watch console output!</p>
+                    </div>
+                </section>
+            </section>
+        </div>
+	</body>
+</html>
