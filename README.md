@@ -36,3 +36,6 @@ License
 Copyright (c) 2011 Politecnico di Milano
 
 This is open source software, licensed under the GNU General Public License. See the file COPYING for details.
+
+[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/guari/jhaptic/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
+
